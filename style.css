@@ -1,0 +1,100 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* מיישר למעלה כדי שהתוכן לא יהיה בדיוק באמצע המסך */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    direction: rtl; /* יישור מימין לשמאל עבור כל העמוד */
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px; /* רוחב מקסימלי לתוכן */
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 10px; /* רווח בין שדה הקלט לכפתור */
+}
+
+input[type="text"] {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 70%; /* רוחב שדה הקלט */
+    font-size: 16px;
+    text-align: right; /* יישור טקסט מימין לשמאל בתוך השדה */
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #007bff; /* כחול */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* אנימציה למעבר צבע */
+}
+
+button:hover {
+    background-color: #0056b3; /* כחול כהה יותר בריחוף */
+}
+
+.image-results {
+    display: grid;
+    /* יוצר רשת של עמודות, כל עמודה ברוחב מינימלי של 200px ומקסימלי של 1fr */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px; /* רווח בין תמונות ברשת */
+    margin-top: 20px;
+}
+
+.image-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column; /* מסדר את התמונה והכפתור אחד מתחת לשני */
+    align-items: center; /* מיישר למרכז אופקית */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.image-item img {
+    max-width: 100%; /* התמונה לא תעבור את רוחב הדיב שלה */
+    height: 150px; /* גובה קבוע לתמונות כדי לשמור על אחידות */
+    object-fit: contain; /* שומר על יחס גובה-רוחב של התמונה */
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.image-item a {
+    display: inline-block; /* כדי שנוכל לתת לו פאדינג */
+    padding: 8px 15px;
+    background-color: #28a745; /* ירוק */
+    color: white;
+    text-decoration: none; /* מוריד קו תחתון מהקישור */
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.image-item a:hover {
+    background-color: #218838; /* ירוק כהה יותר בריחוף */
+}

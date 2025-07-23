@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חיפוש תמונות והורדה</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>חיפוש תמונות</h1>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="הכנס מונח לחיפוש תמונות...">
+            <button id="searchButton">חפש</button>
+        </div>
+        <div id="imageResults" class="image-results">
+            </div>
+    </div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', fetchImages);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            // מפעיל חיפוש גם בלחיצה על Enter
+            if (e.key === 'Enter') {
+                fetchImages();
+            }
+        });
+
+        async function fetchImages() {
+            const query = document.getElementById('searchInput').value.trim();
+            const imageResultsDiv = document.getElementById('imageResults');
+
+            // מנקה תוצאות קודמות ומציג הודעת טעינה
+            imageResultsDiv.innerHTML = '<p>מחפש תמונות...</p>';
+
+            if (!query) {
+                imageResultsDiv.innerHTML = '<p>אנא הזן מונח לחיפוש.</p>';
+                return;
+            }
+
+            // *** מפתח ה-API ומזהה מנוע החיפוש שהכנסת ***
+            const API_KEY = 'AIzaSyB1kqz1jnNp_eUezkT_kKxj6o8rAOhXofc';
+            const CX_ID = 'a5c7bb1306c354f13';
+
+            try {
+                // בונה את כתובת ה-URL לקריאה ל-API של גוגל
+                const searchUrl = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&cx=${CX_ID}&searchType=image&key=${API_KEY}`;
+
+                // מבצע את הקריאה ל-API
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+
+                // מנקה את הודעת הטעינה
+                imageResultsDiv.innerHTML = ''; 
+
+                if (data.items && data.items.length > 0) {
+                    // עובר על כל תמונה ומציג אותה
+                    data.items.forEach(item => {
+                        const imageUrl = item.link;
+                        const title = item.title;
+
+                        const imageItem = document.createElement('div');
+                        imageItem.classList.add('image-item');
+
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = title;
+
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = imageUrl;
+                        // הורדת הקובץ עם שם מתאים, תוך טיפול בשגיאות
+                        downloadLink.download = `${title.replace(/[^a-z0-9]/gi, '_')}.jpg`; 
+                        downloadLink.textContent = 'הורד תמונה';
+                        downloadLink.target = '_blank'; 
+
+                        imageItem.appendChild(img);
+                        imageItem.appendChild(downloadLink);
+                        imageResultsDiv.appendChild(imageItem);
+                    });
+                } else {
+                    imageResultsDiv.innerHTML = '<p>לא נמצאו תמונות עבור החיפוש שלך.</p>';
+                }
+
+            } catch (error) {
+                console.error('שגיאה בחיפוש תמונות:', error);
+                imageResultsDiv.innerHTML = '<p>אירעה שגיאה בחיפוש התמונות. אנא נסה שוב מאוחר יותר. (ייתכן וקיימת בעיה במפתח ה-API או במזהה מנוע החיפוש)</p>';
+            }
+        }
+    </script>
+</body>
+</html>
