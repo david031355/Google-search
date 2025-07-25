@@ -38,24 +38,44 @@
                 return;
             }
 
-            // *** מפתח ה-API ומזהה מנוע החיפוש שהכנסת ***
-            const API_KEY = 'AIzaSyB1kqz1jnNp_eUezkT_kKxj6o8rAOhXofc';
-            const CX_ID = 'a5c7bb1306c354f13';
+            // *** מפתח ה-API ומזהה מנוע החיפוש שלך ***
+            // ודא שהם נכונים ותקפים!
+            const API_KEY = 'AIzaSyB1kqz1jnNp_eUezkT_kKxj6o8rAOhXofc'; 
+            const CX_ID = 'a5c7bb1306c354f13'; 
+
+            // מספר התוצאות המקסימלי שתרצה לנסות להביא
+            // שימו לב: Google Custom Search API מאפשר עד 10 תוצאות לקריאה אחת, ו-100 קריאות חינם ליום.
+            // אם תבקשו 30 תמונות, כל חיפוש יבצע 3 קריאות API.
+            const maxResultsToFetch = 30; // ניתן לשנות ערך זה
+            let allItems = [];
 
             try {
-                // בונה את כתובת ה-URL לקריאה ל-API של גוגל
-                const searchUrl = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&cx=${CX_ID}&searchType=image&key=${API_KEY}`;
+                // לולאה לביצוע מספר קריאות API להשגת יותר מ-10 תוצאות
+                // כל איטרציה מבקשת 10 תוצאות נוספות, החל מהאינדקס המתאים
+                for (let i = 0; i < maxResultsToFetch / 10; i++) {
+                    const startIndex = i * 10 + 1; // 1, 11, 21, וכן הלאה
+                    const searchUrl = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&cx=${CX_ID}&searchType=image&key=${API_KEY}&num=10&start=${startIndex}`;
 
-                // מבצע את הקריאה ל-API
-                const response = await fetch(searchUrl);
-                const data = await response.json();
+                    const response = await fetch(searchUrl);
+                    const data = await response.json();
+
+                    if (data.items) {
+                        allItems = allItems.concat(data.items);
+                    } else {
+                        // אם אין יותר תוצאות או שהייתה שגיאה בבקשה הנוכחית, עצור את הלולאה
+                        break;
+                    }
+
+                    // אופציונלי: הוספת השהייה קצרה בין קריאות API כדי למנוע חריגה ממגבלות
+                    // await new Promise(resolve => setTimeout(resolve, 100)); 
+                }
 
                 // מנקה את הודעת הטעינה
                 imageResultsDiv.innerHTML = ''; 
 
-                if (data.items && data.items.length > 0) {
-                    // עובר על כל תמונה ומציג אותה
-                    data.items.forEach(item => {
+                if (allItems.length > 0) {
+                    // עובר על כל התמונות שנאספו ומציג אותן
+                    allItems.forEach(item => {
                         const imageUrl = item.link;
                         const title = item.title;
 
@@ -68,10 +88,10 @@
 
                         const downloadLink = document.createElement('a');
                         downloadLink.href = imageUrl;
-                        // הורדת הקובץ עם שם מתאים, תוך טיפול בשגיאות
+                        // המאפיין download גורם לדפדפן להוריד את הקובץ ישירות
                         downloadLink.download = `${title.replace(/[^a-z0-9]/gi, '_')}.jpg`; 
                         downloadLink.textContent = 'הורד תמונה';
-                        downloadLink.target = '_blank'; 
+                        downloadLink.target = '_blank'; // פותח בחלון/טאב חדש (אופציונלי אך מומלץ להורדה)
 
                         imageItem.appendChild(img);
                         imageItem.appendChild(downloadLink);
