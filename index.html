@@ -91,7 +91,7 @@
                         // המאפיין download גורם לדפדפן להוריד את הקובץ ישירות
                         downloadLink.download = `${title.replace(/[^a-z0-9]/gi, '_')}.jpg`; 
                         downloadLink.textContent = 'הורד תמונה';
-                        downloadLink.target = '_blank'; // פותח בחלון/טאב חדש (אופציונלי אך מומלץ להורדה)
+                        // *** שינוי כאן: הסרנו את downloadLink.target = '_blank'; ***
 
                         imageItem.appendChild(img);
                         imageItem.appendChild(downloadLink);
